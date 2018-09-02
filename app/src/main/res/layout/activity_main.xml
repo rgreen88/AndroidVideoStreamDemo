@@ -13,6 +13,14 @@
         android:layout_above="@id/btn_play_pause"
         />
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_margin="12dp"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+
     <ImageButton
         android:id="@+id/btn_play_pause"
         android:src="@drawable/ic_play"

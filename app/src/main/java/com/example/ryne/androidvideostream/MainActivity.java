@@ -3,6 +3,7 @@ package com.example.ryne.androidvideostream;
 import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,12 +12,17 @@ import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     //TODO: deprecated...change after tutorial done
-    ProgressDialog mDialog;
-    VideoView videoView;
-    ImageButton btnPlayPause;
+    //ProgressDialog mDialog;
+    private ProgressBar progressBar;
+    private VideoView videoView;
+    private ImageButton btnPlayPause;
+
+    //progress update configuration using background thread
+    private int mProgressStatus = 0;
+    private Handler mHandler = new Handler();
 
     //video to be streamed in videoview
     String videoURL = "http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4";
@@ -26,9 +32,35 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //separate thread updating progress bar and using handler to communicate with ui
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (mProgressStatus < 100) {
+                    mProgressStatus++;
+                    android.os.SystemClock.sleep(50);
+                    mHandler.post(new Runnable() {
+                        //ProgressBar object updates each status increment by Handler
+                        @Override
+                        public void run() {
+                            progressBar.setProgress(mProgressStatus);
+                        }
+                    });
+                }
+//                mHandler.post(new Runnable() {
+//                    @Override
+//                    public void run() {
+//
+//                    }
+//                });
+            }
+
+        });
         //binding button and video view
         videoView = findViewById(R.id.videoView);
         btnPlayPause = findViewById(R.id.btn_play_pause);
+
+        progressBar = findViewById(R.id.progressBar);
         btnPlayPause.setOnClickListener(this);
     }
 
@@ -36,10 +68,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onClick(View v) {
 
-        mDialog = new ProgressDialog(MainActivity.this);
-        mDialog.setMessage("Please wait...");
-        mDialog.setCanceledOnTouchOutside(false);
-        mDialog.show();
+        progressBar = new ProgressBar(MainActivity.this);
+
 
         try{
             if (!videoView.isPlaying()) {
@@ -66,7 +96,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(MediaPlayer mp) {
-                mDialog.dismiss();
                 mp.setLooping(true);
                 //start video
                 videoView.start();
