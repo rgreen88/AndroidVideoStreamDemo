@@ -1,6 +1,5 @@
 package com.example.ryne.androidvideostream;
 
-import android.app.ProgressDialog;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Handler;
@@ -10,15 +9,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity{
 
     //TODO: deprecated...change after tutorial done
     //ProgressDialog mDialog;
     private ProgressBar progressBar;
     private VideoView videoView;
     private ImageButton btnPlayPause;
+    private TextView mLoadingText;
 
     //progress update configuration using background thread
     private int mProgressStatus = 0;
@@ -35,9 +36,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //binding button and video view
         videoView = findViewById(R.id.videoView);
         btnPlayPause = findViewById(R.id.btn_play_pause);
-
+        mLoadingText = findViewById(R.id.tvText);
         progressBar = findViewById(R.id.progressBar);
-        btnPlayPause.setOnClickListener(this);
+        btnPlayPause.setOnClickListener((View.OnClickListener) this); //cast View.OnClickListener for not using implementation
 
         //separate thread updating progress bar and using handler to communicate with ui
         new Thread(new Runnable() {
@@ -64,6 +65,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
+
+                                mLoadingText.setVisibility(View.VISIBLE);
 
                                 try{
                                     if (!videoView.isPlaying()) {
@@ -102,11 +105,5 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 });
             }
         }).start();
-    }
-
-
-    @Override
-    public void onClick(View v) {
-
     }
 }

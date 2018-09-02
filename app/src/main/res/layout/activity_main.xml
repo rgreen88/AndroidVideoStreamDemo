@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="12dp"
-        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
+        style="hor"/>
 
     <ImageButton
         android:id="@+id/btn_play_pause"
@@ -29,5 +29,14 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:contentDescription="@string/pause_play" />
+
+    <TextView
+        android:id="@+id/tvText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/progressBar"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="-12dp"
+        android:text="@string/progress_update" />
 
 </RelativeLayout>
