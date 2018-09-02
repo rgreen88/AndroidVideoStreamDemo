@@ -32,75 +32,81 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //separate thread updating progress bar and using handler to communicate with ui
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                while (mProgressStatus < 100) {
-                    mProgressStatus++;
-                    android.os.SystemClock.sleep(50);
-                    mHandler.post(new Runnable() {
-                        //ProgressBar object updates each status increment by Handler
-                        @Override
-                        public void run() {
-                            progressBar.setProgress(mProgressStatus);
-                        }
-                    });
-                }
-//                mHandler.post(new Runnable() {
-//                    @Override
-//                    public void run() {
-//
-//                    }
-//                });
-            }
-
-        });
         //binding button and video view
         videoView = findViewById(R.id.videoView);
         btnPlayPause = findViewById(R.id.btn_play_pause);
 
         progressBar = findViewById(R.id.progressBar);
         btnPlayPause.setOnClickListener(this);
-    }
 
-    //setting dialog as video is retrieved
-    @Override
-    public void onClick(View v) {
+        //separate thread updating progress bar and using handler to communicate with ui
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
 
-        progressBar = new ProgressBar(MainActivity.this);
-
-
-        try{
-            if (!videoView.isPlaying()) {
-                Uri uri = Uri.parse(videoURL);
-                videoView.setVideoURI(uri);
-                videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                //TODO: btn object setListener in thread
+                btnPlayPause.setOnClickListener(new View.OnClickListener() {
                     @Override
-                    public void onCompletion(MediaPlayer mp) {
-                        //button displays play icon img asset
-                        btnPlayPause.setImageResource(R.drawable.ic_play);
+                    public void onClick(View v) {
+
+                        progressBar = new ProgressBar(MainActivity.this);
+
+                        while (mProgressStatus < 100) {
+                            mProgressStatus++;
+                            android.os.SystemClock.sleep(100);
+                            mHandler.post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    progressBar.setProgress(mProgressStatus);
+                                }
+                            });
+                        }
+                        mHandler.post(new Runnable() {
+                            @Override
+                            public void run() {
+
+                                try{
+                                    if (!videoView.isPlaying()) {
+                                        Uri uri = Uri.parse(videoURL);
+                                        videoView.setVideoURI(uri);
+                                        videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+                                            @Override
+                                            public void onCompletion(MediaPlayer mp) {
+                                                //button displays play icon img asset
+                                                btnPlayPause.setImageResource(R.drawable.ic_play);
+                                            }
+                                        });
+                                    }
+                                    else{
+                                        videoView.pause();
+                                        btnPlayPause.setImageResource(R.drawable.ic_play);
+                                    }
+                                }
+                                catch (Exception e){
+                                    Log.e("Main", "Error with streaming");
+                                }
+                                //removing dialog and requesting video start
+                                videoView.requestFocus();
+                                videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                                    @Override
+                                    public void onPrepared(MediaPlayer mp) {
+                                        mp.setLooping(true);
+                                        //start video
+                                        videoView.start();
+                                        btnPlayPause.setImageResource(R.drawable.ic_pause);
+                                    }
+                                });
+                            }
+                        });
                     }
                 });
             }
-            else{
-                videoView.pause();
-                btnPlayPause.setImageResource(R.drawable.ic_play);
-            }
-        }
-        catch (Exception e){
-            Log.e("Main", "Error with streaming");
-        }
-        //removing dialog and requesting video start
-        videoView.requestFocus();
-        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                mp.setLooping(true);
-                //start video
-                videoView.start();
-                btnPlayPause.setImageResource(R.drawable.ic_pause);
-            }
-        });
+        }).start();
+    }
+
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
