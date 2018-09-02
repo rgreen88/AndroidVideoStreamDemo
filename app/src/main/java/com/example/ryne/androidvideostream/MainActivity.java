@@ -38,29 +38,32 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         mLoadingText = findViewById(R.id.tvText);
         progressBar = findViewById(R.id.progressBar);
         btnPlayPause.setOnClickListener(this);
+        progressBar.setVisibility(View.INVISIBLE);
+        mLoadingText.setVisibility(View.INVISIBLE);
 
         //separate thread updating progress bar and using handler to communicate with ui
         new Thread(new Runnable() {
             @Override
             public void run() {
 
-                //TODO: btn object setListener in thread
                 btnPlayPause.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                      progressBar = new ProgressBar(MainActivity.this);
 
-                        while (mProgressStatus < 100) {
+                        //set to visible at start of onClick
+                        progressBar.setVisibility(View.VISIBLE);
+                        mLoadingText.setVisibility(View.VISIBLE);
+
+                        while (mProgressStatus < 30) {
+
                             mProgressStatus++;
-                            android.os.SystemClock.sleep(15);
+                            android.os.SystemClock.sleep(100);
+
                         }
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
-
-                                progressBar.setVisibility(View.INVISIBLE);
-
                                 try{
                                     if (!videoView.isPlaying()) {
                                         Uri uri = Uri.parse(videoURL);
@@ -69,8 +72,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                             @Override
                                             public void onCompletion(MediaPlayer mp) {
                                                 //button displays play icon img asset
-                                                btnPlayPause.setImageResource(R.drawable.ic_play);
-                                            }
+                                                btnPlayPause.setImageResource(R.drawable.ic_play); }
                                         });
                                     }
                                     else{
@@ -81,6 +83,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                                 catch (Exception e){
                                     Log.e("Main", "Error with streaming");
                                 }
+                                //progress update go invisible at end of video loading thread
+                                progressBar.setVisibility(View.INVISIBLE);
+                                mLoadingText.setVisibility(View.INVISIBLE);
+
                                 //removing dialog and requesting video start
                                 videoView.requestFocus();
                                 videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

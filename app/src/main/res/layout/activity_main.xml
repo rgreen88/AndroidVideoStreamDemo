@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="12dp"
+
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
 
     <ImageButton
@@ -28,7 +29,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:contentDescription="@string/pause_play" />
+        android:contentDescription="@string/pause_play"
+        />
 
     <TextView
         android:id="@+id/tvText"
@@ -36,7 +38,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/progressBar"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="-12dp"
-        android:text="@string/progress_update" />
+        android:layout_marginTop="12dp"
+        android:text="@string/progress_update"
+        android:textColor="#FFFFFF"/>
 
 </RelativeLayout>
