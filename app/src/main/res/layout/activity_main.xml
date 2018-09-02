@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
         android:layout_margin="12dp"
-        style="hor"/>
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"/>
 
     <ImageButton
         android:id="@+id/btn_play_pause"

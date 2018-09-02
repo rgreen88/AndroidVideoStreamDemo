@@ -12,10 +12,9 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.VideoView;
 
-public class MainActivity extends AppCompatActivity{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener{
 
     //TODO: deprecated...change after tutorial done
-    //ProgressDialog mDialog;
     private ProgressBar progressBar;
     private VideoView videoView;
     private ImageButton btnPlayPause;
@@ -38,7 +37,7 @@ public class MainActivity extends AppCompatActivity{
         btnPlayPause = findViewById(R.id.btn_play_pause);
         mLoadingText = findViewById(R.id.tvText);
         progressBar = findViewById(R.id.progressBar);
-        btnPlayPause.setOnClickListener((View.OnClickListener) this); //cast View.OnClickListener for not using implementation
+        btnPlayPause.setOnClickListener(this);
 
         //separate thread updating progress bar and using handler to communicate with ui
         new Thread(new Runnable() {
@@ -50,23 +49,17 @@ public class MainActivity extends AppCompatActivity{
                     @Override
                     public void onClick(View v) {
 
-                        progressBar = new ProgressBar(MainActivity.this);
+                      progressBar = new ProgressBar(MainActivity.this);
 
                         while (mProgressStatus < 100) {
                             mProgressStatus++;
-                            android.os.SystemClock.sleep(100);
-                            mHandler.post(new Runnable() {
-                                @Override
-                                public void run() {
-                                    progressBar.setProgress(mProgressStatus);
-                                }
-                            });
+                            android.os.SystemClock.sleep(15);
                         }
                         mHandler.post(new Runnable() {
                             @Override
                             public void run() {
 
-                                mLoadingText.setVisibility(View.VISIBLE);
+                                progressBar.setVisibility(View.INVISIBLE);
 
                                 try{
                                     if (!videoView.isPlaying()) {
@@ -105,5 +98,10 @@ public class MainActivity extends AppCompatActivity{
                 });
             }
         }).start();
+    }
+
+    @Override
+    public void onClick(View v) {
+
     }
 }
