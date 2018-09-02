@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">AndroidVideoStream</string>
+    <string name="pause_play">pause/play</string>
+</resources>
